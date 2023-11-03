@@ -1,3 +1,4 @@
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -21,6 +22,29 @@
      <h1>HGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</h1>	 
 	    <hr/>
 	     <img style="height: 60px;" src="https://www.iconpacks.net/icons/1/free-user-group-icon-307-thumb.png"/>
+       
+       <table class="table">
+    <thead>
+      <tr>
+        <th>SNO</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Login Time</th>
+        <th>Login Out</th>
+      </tr>
+    </thead>
+    <tbody>
+      <c:forEach var="item" items="${loginHistory}" varStatus="status">
+      <tr>
+       <td>${status.count}</td>
+       <td>${item.signup.name}</td>
+        <td>${item.signup.email}</td>
+        <td>${item.login_time}</td>
+         <td>${item.logout_time}</td>
+      </tr>
+      </c:forEach>
+    </tbody>
+  </table>
 
 </div>
 
