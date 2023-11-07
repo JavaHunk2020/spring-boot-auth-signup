@@ -31,8 +31,17 @@
         <th>Email</th>
         <th>Login Time</th>
         <th>Login Out</th>
-          <th>Duration</th>
+          <th>
+          <a href="${pageContext.request.contextPath}/history/sort?sortOrder=asc">
+          <span style="font-size: 20px;">&#8593;</span>
+          </a>
+          <a href="${pageContext.request.contextPath}/history/sort?sortOrder=dsc">
+          <span style="font-size: 20px;">&#8595;</span>
+          </a>
+          Duration</th>
+             <th>Action</th>
       </tr>
+     
     </thead>
     <tbody>
       <c:forEach var="item" items="${loginHistory}" varStatus="status">
@@ -43,6 +52,11 @@
         <td>${item.login_time}</td>
          <td>${item.logout_time}</td>
            <td>${item.duration}</td>
+           <td>
+           <a href="deleteHistory?dbid=${item.lhid}">
+                 <button class="btn btn-danger">DELETE</button>
+           </a>
+           </td>
       </tr>
       </c:forEach>
     </tbody>

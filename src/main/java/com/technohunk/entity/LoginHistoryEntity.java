@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="login_hostory_tbl")
@@ -24,7 +25,7 @@ public class LoginHistoryEntity {
 	private Timestamp logout_time;
 	private long duration;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name="email",unique = false, nullable =false)
 	private Signup signup;
 	
