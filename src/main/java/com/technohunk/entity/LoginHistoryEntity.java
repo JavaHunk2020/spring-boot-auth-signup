@@ -22,11 +22,19 @@ public class LoginHistoryEntity {
 	private int lhid;
 	private Timestamp login_time;
 	private Timestamp logout_time;
+	private long duration;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="email",unique = false, nullable =false)
 	private Signup signup;
 	
+	
+	public long getDuration() {
+		return duration;
+	}
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
 	public int getLhid() {
 		return lhid;
 	}

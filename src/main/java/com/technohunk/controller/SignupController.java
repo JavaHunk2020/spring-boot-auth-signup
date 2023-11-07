@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,13 +35,27 @@ public class SignupController {
 		return "signup";
 	}
 	
+	@GetMapping("/logout")
+	public String logout(Model model,HttpSession session){
+		Integer dbid=(Integer)session.getAttribute("loginHistoryDbId");
+		LoginHistoryEntity historyEntity=loginHistoryRepository.findById(dbid).get();
+		historyEntity.setLogout_time(new Timestamp(new Date().getTime()));
+		long duration=historyEntity.getLogout_time().getTime()-historyEntity.getLogin_time().getTime();
+		historyEntity.setDuration(duration);
+		loginHistoryRepository.save(historyEntity);
+		
+		session.invalidate();
+		model.addAttribute("message","You have been logout successfully.");
+		return "login";
+	}
+	
 	@GetMapping("/auth")
 	public String showLogin(){
 		return "login";
 	}
 	
 	@PostMapping("/auth")
-	public String validateUser(@ModelAttribute Signup signup , Model model) {
+	public String validateUser(@ModelAttribute Signup signup ,HttpSession session, Model model) {
 		Optional<Signup> optional=signupRepository.findByEmailAndPassword(signup.getEmail(), signup.getPassword());
 		if(optional.isPresent()) {
 			Signup dbSignup=optional.get();
@@ -47,10 +63,14 @@ public class SignupController {
 			loginHistoryEntity.setLogin_time(new Timestamp(new Date().getTime()));
 			//This line is important
 			loginHistoryEntity.setSignup(dbSignup);
-			loginHistoryRepository.save(loginHistoryEntity);
+			LoginHistoryEntity dbEntity=loginHistoryRepository.save(loginHistoryEntity);
 			
-			List<LoginHistoryEntity> loginHistoryList=loginHistoryRepository.findAll();
+			List<LoginHistoryEntity> loginHistoryList=loginHistoryRepository.findByEmail(signup.getEmail());
 			model.addAttribute("loginHistory",loginHistoryList);
+			
+			//in session we are adding username/email
+			session.setAttribute("username", signup.getEmail());
+			session.setAttribute("loginHistoryDbId", dbEntity.getLhid());
 			
 			return "home";	
 		}else {

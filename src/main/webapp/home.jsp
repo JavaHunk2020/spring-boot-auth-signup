@@ -19,10 +19,10 @@
 <div class="container">
 	 <h2>User Login  form</h2>
 	<hr>
-     <h1>HGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</h1>	 
+     <h1>Hello Mr. ${sessionScope.username} - ${sessionScope.loginHistoryDbId}</h1>	 
 	    <hr/>
 	     <img style="height: 60px;" src="https://www.iconpacks.net/icons/1/free-user-group-icon-307-thumb.png"/>
-       
+        <a href="logout">Logout</a>
        <table class="table">
     <thead>
       <tr>
@@ -31,6 +31,7 @@
         <th>Email</th>
         <th>Login Time</th>
         <th>Login Out</th>
+          <th>Duration</th>
       </tr>
     </thead>
     <tbody>
@@ -41,6 +42,7 @@
         <td>${item.signup.email}</td>
         <td>${item.login_time}</td>
          <td>${item.logout_time}</td>
+           <td>${item.duration}</td>
       </tr>
       </c:forEach>
     </tbody>
