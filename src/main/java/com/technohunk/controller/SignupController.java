@@ -4,8 +4,6 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,23 +15,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.technohunk.entity.LoginHistoryEntity;
+import com.technohunk.dto.LoginHistoryDTO;
+import com.technohunk.dto.SignupDTO;
 import com.technohunk.entity.Signup;
-import com.technohunk.repository.LoginHistoryRepository;
-import com.technohunk.repository.SignupRepository;
+import com.technohunk.service.SignupService;
 
 @Controller
 public class SignupController {
 	
-	@Autowired
-	private SignupRepository signupRepository;
 	
 	@Autowired
-	private LoginHistoryRepository loginHistoryRepository;
+	private SignupService signupService;
+	
 			
 	@GetMapping("deleteHistory")
 	public String deleteHistory(@RequestParam int dbid,Model model) {
-		loginHistoryRepository.deleteById(dbid);
+		signupService.deleteLoginHistoryById(dbid);
 		return "redirect:/showHistory";
 	}
 	
@@ -41,7 +38,7 @@ public class SignupController {
 	@GetMapping("history/sort")
 	public String showHistory(String sortOrder,Model model,HttpSession session) {
 		String username=(String)session.getAttribute("username");
-		List<LoginHistoryEntity> loginHistoryList=loginHistoryRepository.findByEmail(username);
+		List<LoginHistoryDTO> loginHistoryList=signupService.findByEmail(username);
 		if("asc".equalsIgnoreCase(sortOrder)) {
 			Collections.sort(loginHistoryList,(c1,c2)->(int)(c1.getDuration()-c2.getDuration()));
 		}else {
@@ -55,7 +52,7 @@ public class SignupController {
 	@GetMapping("showHistory")
 	public String showHistory(Model model,HttpSession session) {
 		String username=(String)session.getAttribute("username");
-		List<LoginHistoryEntity> loginHistoryList=loginHistoryRepository.findByEmail(username);
+		List<LoginHistoryDTO> loginHistoryList=signupService.findByEmail(username);
 		model.addAttribute("loginHistory",loginHistoryList);
 		return "home";
 	}
@@ -69,12 +66,11 @@ public class SignupController {
 	@GetMapping("/logout")
 	public String logout(Model model,HttpSession session){
 		Integer dbid=(Integer)session.getAttribute("loginHistoryDbId");
-		LoginHistoryEntity historyEntity=loginHistoryRepository.findById(dbid).get();
-		historyEntity.setLogout_time(new Timestamp(new Date().getTime()));
-		long duration=historyEntity.getLogout_time().getTime()-historyEntity.getLogin_time().getTime();
-		historyEntity.setDuration(duration);
-		loginHistoryRepository.save(historyEntity);
-		
+		LoginHistoryDTO loginHistoryDTO=signupService.findLoginHistoryByDbId(dbid);
+		loginHistoryDTO.setLogout_time(new Timestamp(new Date().getTime()));
+		long duration=loginHistoryDTO.getLogout_time().getTime()-loginHistoryDTO.getLogin_time().getTime();
+		loginHistoryDTO.setDuration(duration);
+		signupService.saveHistoryEntity(loginHistoryDTO);
 		session.invalidate();
 		model.addAttribute("message","You have been logout successfully.");
 		return "login";
@@ -87,21 +83,19 @@ public class SignupController {
 	
 	@PostMapping("/auth")
 	public String validateUser(@ModelAttribute Signup signup ,HttpSession session, Model model) {
-		Optional<Signup> optional=signupRepository.findByEmailAndPassword(signup.getEmail(), signup.getPassword());
-		if(optional.isPresent()) {
-			Signup dbSignup=optional.get();
-			LoginHistoryEntity loginHistoryEntity=new LoginHistoryEntity();
-			loginHistoryEntity.setLogin_time(new Timestamp(new Date().getTime()));
+		boolean optional=signupService.findByEmailAndPassword(signup.getEmail(), signup.getPassword());
+		if(optional) {
+			LoginHistoryDTO loginHistoryDTO=new LoginHistoryDTO();
+			loginHistoryDTO.setLogin_time(new Timestamp(new Date().getTime()));
 			//This line is important
-			loginHistoryEntity.setSignup(dbSignup);
-			LoginHistoryEntity dbEntity=loginHistoryRepository.save(loginHistoryEntity);
+			LoginHistoryDTO historyDTO=signupService.createHistoryEntity(loginHistoryDTO,signup.getEmail());
 			
-			List<LoginHistoryEntity> loginHistoryList=loginHistoryRepository.findByEmail(signup.getEmail());
+			List<LoginHistoryDTO> loginHistoryList=signupService.findByEmail(signup.getEmail());
 			model.addAttribute("loginHistory",loginHistoryList);
 			//session.setMaxInactiveInterval(30);
 			//in session we are adding username/email
 			session.setAttribute("username", signup.getEmail());
-			session.setAttribute("loginHistoryDbId", dbEntity.getLhid());
+			session.setAttribute("loginHistoryDbId", historyDTO.getLhid());
 			
 			return "home";	
 		}else {
@@ -112,9 +106,9 @@ public class SignupController {
 	}
 	
 	@PostMapping("/addSignup")
-	public String postSignup(@ModelAttribute Signup signup) {
+	public String postSignup(@ModelAttribute SignupDTO signup) {
 		signup.setDoe(new Timestamp(new Date().getTime()));
-		signupRepository.save(signup);
+		signupService.saveSigup(signup);
 		return "login";
 	}
 	
