@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.technohunk.dto.DogDTO;
 
-
+//GET - fetching the resources  - IDEMPOTENT
+//POST -Creating a new resource - Non IDEMPOTENT
+//PUT - updating an existing resource // IDEMPOTENT
+//DELETE - deleting an existing resource /IDEMPOTENT
+//PATCH - updating an existing resource partially - Non IDEMPOTENT
 @RestController
 @RequestMapping("/api")
 public class DogController {
