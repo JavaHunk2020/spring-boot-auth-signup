@@ -3,20 +3,25 @@ package com.technohunk.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.technohunk.dto.DogDTO;
+import com.technohunk.dto.PatchDTO;
 import com.technohunk.entity.Dog;
+import com.technohunk.exception.DogNotFoundException;
 import com.technohunk.repository.DogRepository;
 
 //GET - fetching the resources  - IDEMPOTENT
@@ -30,6 +35,35 @@ public class DogController {
 	
 	@Autowired
 	private DogRepository dogRepository;
+	
+	//Nagendra , nagendra  , NagendRA
+	@PatchMapping("/dogs")
+	public Map<String,Object> partialUpdate(@RequestBody PatchDTO patchDTO){
+		//
+		Dog entity = dogRepository.findById(patchDTO.getPid()).get();
+		if ("color".equalsIgnoreCase(patchDTO.getAttributeName())) {
+			entity.setColor(patchDTO.getValue());
+		} else if ("tail".equalsIgnoreCase(patchDTO.getAttributeName())) {
+			entity.setTail(Integer.parseInt(patchDTO.getValue()));
+		}
+		dogRepository.save(entity);
+		Map<String,Object> response=new HashMap<>();
+		response.put("message", "updated successfully");
+		return response;
+	}
+	
+	
+	@PutMapping("/dogs")
+	public Map<String,Object> update(@RequestBody DogDTO dog){
+		Dog entity=new  Dog();
+		BeanUtils.copyProperties(dog, entity);
+		dogRepository.save(entity);
+		Map<String,Object> response=new HashMap<>();
+		response.put("status", "success");
+		response.put("message", "updated successfully");
+		return response;
+	}
+	
 	
 	//localhost:444/api/dogs/jacky
 	@DeleteMapping(value="/dogs/{name}")
@@ -72,7 +106,12 @@ public class DogController {
 	//Passing value as a part of URI
 	@GetMapping(value="/dogs/{name}")
 	public Dog getDogByTail(@PathVariable String name) {
-		return dogRepository.findById(name).get();
+		Optional<Dog> optional=dogRepository.findById(name);
+		if(optional.isEmpty()) { 
+			throw new DogNotFoundException("Hmmmm  sorry this dog does not exist! name = "+name);
+		}else {
+		  return optional.get();	
+		}
 	}
 	
 	@GetMapping(value="/dogs")
