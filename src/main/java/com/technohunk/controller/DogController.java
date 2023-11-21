@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,6 +36,15 @@ public class DogController {
 	
 	@Autowired
 	private DogRepository dogRepository;
+	
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@GetMapping("/wow")
+	public Map<String,Object> wow(){
+		Map<String,Object> response=new HashMap<>();
+		response.put("message", "magic magic!");
+		response.put("code", "204");
+		return response;
+	}
 	
 	//Nagendra , nagendra  , NagendRA
 	@PatchMapping("/dogs")
@@ -67,6 +77,7 @@ public class DogController {
 	
 	//localhost:444/api/dogs/jacky
 	@DeleteMapping(value="/dogs/{name}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public Map<String,Object> deleteDogByName(@PathVariable String name) {
 		dogRepository.deleteById(name);
 		Map<String,Object> response=new HashMap<>();

@@ -32,7 +32,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			List<GrantedAuthority> authorities = new ArrayList<>();
 			authorities.add(new SimpleGrantedAuthority("ADMIN"));
 			return new User(username,passwordEncoder.encode("jill"),authorities);
-		} else {
+		}else if ("shreya@gmail.com".equals(username)) {
+			List<GrantedAuthority> authorities = new ArrayList<>();
+			authorities.add(new SimpleGrantedAuthority("USER"));
+			return new User(username,passwordEncoder.encode("test"),authorities);
+		}  else {
 			throw new UsernameNotFoundException("User Not Found with username: " + username);
 		}
 		// return UserDetailsImpl.build(signup);

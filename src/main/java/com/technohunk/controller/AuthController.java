@@ -43,6 +43,7 @@ public class AuthController {
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		Map<String,Object> jwtReponse = new HashMap<>();
 		jwtReponse.put("Authorization", jwt);
+		jwtReponse.put("email", signupRequest.getEmail());
 		return jwtReponse;
 	}
 }
