@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +26,16 @@ public class SignupService {
 	@Autowired
 	private LoginHistoryRepository loginHistoryRepository;
 	
+	/**
+	 * Who will call this methid ???? spring security
+	 */
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	public void saveSigup(SignupDTO signupDTO) {
 		Signup signup=new Signup();
 		BeanUtils.copyProperties(signupDTO, signup);
+		signup.setPassword(passwordEncoder.encode(signup.getPassword()));
 		signupRepository.save(signup);
 	}
 	
@@ -82,8 +90,12 @@ public class SignupService {
 	}
 	
 	public boolean findByEmailAndPassword(String email,String password) {
-		Optional<Signup> optional=signupRepository.findByEmailAndPassword(email, password);
-		return optional.isPresent();
+		boolean status=false;
+		Optional<Signup> optional=signupRepository.findByEmail(email);
+		if(optional.isPresent()) {
+			status = passwordEncoder.matches(password, optional.get().getPassword());
+		}
+		return status;
 	}
 	
 

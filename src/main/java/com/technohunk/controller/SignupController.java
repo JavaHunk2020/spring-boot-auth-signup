@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.technohunk.dto.LoginHistoryDTO;
@@ -21,6 +22,7 @@ import com.technohunk.entity.Signup;
 import com.technohunk.service.SignupService;
 
 @Controller
+@RequestMapping("/ui")
 public class SignupController {
 	
 	
@@ -108,6 +110,7 @@ public class SignupController {
 	@PostMapping("/addSignup")
 	public String postSignup(@ModelAttribute SignupDTO signup) {
 		signup.setDoe(new Timestamp(new Date().getTime()));
+		signup.setRole("CUSTOMER");
 		signupService.saveSigup(signup);
 		return "login";
 	}

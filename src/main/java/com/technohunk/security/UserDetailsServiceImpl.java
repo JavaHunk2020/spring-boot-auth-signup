@@ -2,6 +2,7 @@ package com.technohunk.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.technohunk.entity.Signup;
+import com.technohunk.repository.SignupRepository;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -24,19 +28,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private SignupRepository signupRepository;
+	
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		if ("jack@gmail.com".equals(username)) {
+		Optional<Signup> optional=signupRepository.findByEmail(username);
+		if (optional.isPresent()) {
+			Signup signup=optional.get();
 			List<GrantedAuthority> authorities = new ArrayList<>();
-			authorities.add(new SimpleGrantedAuthority("ADMIN"));
-			return new User(username,passwordEncoder.encode("jill"),authorities);
-		}else if ("shreya@gmail.com".equals(username)) {
-			List<GrantedAuthority> authorities = new ArrayList<>();
-			authorities.add(new SimpleGrantedAuthority("USER"));
-			return new User(username,passwordEncoder.encode("test"),authorities);
-		}  else {
+			authorities.add(new SimpleGrantedAuthority(signup.getRole()));
+			return new User(username,signup.getPassword(),authorities);
+		} else {
 			throw new UsernameNotFoundException("User Not Found with username: " + username);
 		}
 		// return UserDetailsImpl.build(signup);

@@ -26,7 +26,7 @@
 		<hr />
 		<img style="height: 60px;"
 			src="https://www.iconpacks.net/icons/1/free-user-group-icon-307-thumb.png" />
-		<a href="${pageContext.request.contextPath}/logout">Logout</a>
+		<a href="${pageContext.request.contextPath}/ui/logout">Logout</a>
 		<table class="table">
 			<thead>
 				<tr>
@@ -36,10 +36,10 @@
 					<th>Login Time</th>
 					<th>Login Out</th>
 					<th><a
-						href="${pageContext.request.contextPath}/history/sort?sortOrder=asc">
+						href="${pageContext.request.contextPath}/ui/history/sort?sortOrder=asc">
 							<span style="font-size: 20px;">&#8593;</span>
 					</a> <a
-						href="${pageContext.request.contextPath}/history/sort?sortOrder=dsc">
+						href="${pageContext.request.contextPath}/ui/history/sort?sortOrder=dsc">
 							<span style="font-size: 20px;">&#8595;</span>
 					</a> Duration</th>
 					<th>Action</th>
@@ -55,7 +55,7 @@
 						<td>${item.login_time}</td>
 						<td>${item.logout_time}</td>
 						<td>${item.duration}</td>
-						<td><a href="deleteHistory?dbid=${item.lhid}">
+						<td><a href="deleteHistory/ui?dbid=${item.lhid}">
 								<button class="btn btn-danger">DELETE</button>
 						</a></td>
 					</tr>

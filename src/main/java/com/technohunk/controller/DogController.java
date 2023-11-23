@@ -37,6 +37,15 @@ public class DogController {
 	@Autowired
 	private DogRepository dogRepository;
 	
+	
+	@GetMapping("/papa")
+	public Map<String,Object> myDate(){
+		Map<String,Object> response=new HashMap<>();
+		response.put("message", "I am daddy!!!!!!!!!!!!!");
+		response.put("code", "204");
+		return response;
+	}
+	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/wow")
 	public Map<String,Object> wow(){

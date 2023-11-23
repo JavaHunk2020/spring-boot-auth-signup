@@ -58,6 +58,11 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests().antMatchers("/v1/cauth/**")
-				.permitAll().anyRequest().authenticated();
+				.permitAll()
+				.antMatchers("/ap/papa")
+				.permitAll()
+				.antMatchers("/ui/**")
+				.permitAll()
+				.anyRequest().authenticated();
 	}
 }

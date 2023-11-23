@@ -25,7 +25,7 @@
 	<span style="font-weight: bold;font-size: 18px;color:blue">${message}</span>
 	 <hr/>
 	 
-	<form action="addSignup" method="post">
+	<form action="${pageContext.request.contextPath}/ui/addSignup" method="post">
 	
 	 <div class="form-group" style="width: 50%;">
   	           <b>Username</b>

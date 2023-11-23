@@ -20,6 +20,8 @@ public class Signup {
 	private String password;
 	private String email;
 	private String name;
+	@Column(length = 30,columnDefinition = "varchar(30) DEFAULT 'CUSTOMER'")
+	private String role;
 	private Timestamp doe;
 
 	public int getNisha() {
@@ -62,4 +64,12 @@ public class Signup {
 		this.doe = doe;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
 }

@@ -34,7 +34,15 @@ public class AuthController {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 	  * @param signupRequest
 	  * @return
+	  * {
+  "email":"jack@gmail.com",
+  "password":"jill"
+
+}
+@RequestBody ->> it is reading data from request payload & converting
+data into JavaObject using jackson mapper
 	  */
+	  
 	@PostMapping("/cauth")
 	public Map<String,Object>  postLogin(@RequestBody SignupDTO signupRequest) {
 		//authentication has two things - username and role

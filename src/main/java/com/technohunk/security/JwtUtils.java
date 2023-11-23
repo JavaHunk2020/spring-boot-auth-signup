@@ -42,7 +42,7 @@ public class JwtUtils {
    
      Map<String,Object> claims=new HashMap<>();
 	 claims.put("auth", role);
-	 claims.put("email", "pykube02@gmail.com");
+	 claims.put("email", userPrincipal.getUsername());
 	 claims.put("company", "Technohunk Info Solution Pvt. Ltd.");
 	
     return Jwts.builder()

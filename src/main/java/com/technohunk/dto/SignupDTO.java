@@ -8,7 +8,18 @@ public class SignupDTO {
 	private String password;
 	private String email;
 	private String name;
+	private String role;
 	private Timestamp doe;
+	
+	
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 
 	public int getNisha() {
 		return nisha;
