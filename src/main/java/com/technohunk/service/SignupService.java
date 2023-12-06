@@ -3,6 +3,7 @@ package com.technohunk.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,27 @@ public class SignupService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	public List<SignupDTO> findSignups() {
+		return signupRepository.findAll().stream().map(s->{
+			SignupDTO signupDTO=new SignupDTO();
+			signupDTO.setName(s.getName());
+			signupDTO.setEmail(s.getEmail());
+			signupDTO.setNisha(s.getNisha());
+			signupDTO.setDoe(s.getDoe());
+			signupDTO.setRole(s.getRole());
+			return signupDTO;
+		}).collect(Collectors.toList());
+	}
+	
 	public void saveSigup(SignupDTO signupDTO) {
 		Signup signup=new Signup();
 		BeanUtils.copyProperties(signupDTO, signup);
 		signup.setPassword(passwordEncoder.encode(signup.getPassword()));
 		signupRepository.save(signup);
+	}
+	
+	public void deleteSignupByEmail(String email) {
+		signupRepository.findByEmail(email).forEach(s->signupRepository.delete(s));
 	}
 	
 	public void deleteLoginHistoryById(int  dbid) {
@@ -80,7 +97,7 @@ public class SignupService {
 		
 		LoginHistoryEntity historyEntity=new LoginHistoryEntity();
 		BeanUtils.copyProperties(loginHistoryDTO, historyEntity);
-		Signup signup=signupRepository.findByEmail(email).get();
+		Signup signup=signupRepository.findByEmail(email).get(0);
 		historyEntity.setSignup(signup);
 		
 		LoginHistoryEntity dbEntity=loginHistoryRepository.save(historyEntity);
@@ -91,9 +108,9 @@ public class SignupService {
 	
 	public boolean findByEmailAndPassword(String email,String password) {
 		boolean status=false;
-		Optional<Signup> optional=signupRepository.findByEmail(email);
-		if(optional.isPresent()) {
-			status = passwordEncoder.matches(password, optional.get().getPassword());
+		List<Signup> list=signupRepository.findByEmail(email);
+		if(list.size()>0) {
+			status = passwordEncoder.matches(password, list.get(0).getPassword());
 		}
 		return status;
 	}

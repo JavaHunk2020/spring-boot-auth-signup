@@ -35,9 +35,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		Optional<Signup> optional=signupRepository.findByEmail(username);
-		if (optional.isPresent()) {
-			Signup signup=optional.get();
+		List<Signup> list=signupRepository.findByEmail(username);
+		if (list.size()>0) {
+			Signup signup=list.get(0);
 			List<GrantedAuthority> authorities = new ArrayList<>();
 			authorities.add(new SimpleGrantedAuthority(signup.getRole()));
 			return new User(username,signup.getPassword(),authorities);

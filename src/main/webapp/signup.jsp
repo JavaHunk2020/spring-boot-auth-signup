@@ -11,6 +11,7 @@
 <script>
 
     function clearMessage(){
+    	//<span>WOWOWOWOWO</span>  
     	document.getElementById("usernameError").innerHTML="";
     	document.getElementById("passwordError").innerHTML="";
     	document.getElementById("nameError").innerHTML="";

@@ -61,6 +61,8 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.permitAll()
 				.antMatchers("/ap/papa")
 				.permitAll()
+				.antMatchers("/v1/signups/**")
+				.permitAll()
 				.antMatchers("/ui/**")
 				.permitAll()
 				.anyRequest().authenticated();

@@ -8,6 +8,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+  
+  
+  function Car() {
+	    this.speed = 0;
+	    this.speedUp = function (speed) {
+	        this.speed = speed;
+	        setTimeout(function () {
+	            console.log("this.speed  = "+this.speed); // undefined
+	        }, 1000);
+
+	    };
+	}
+
+    window.speed=9019;
+	let car = new Car();
+	car.speedUp(50);
+  
+  function papa(){
+	  console.log(x); 
+	  for(var x=1;x<=10;x++){
+	    	 
+	  }
+  }
+  papa();
+     //var has function scope
+     //let has block scope
+     for(var  x=1;x<=10;x++){
+    	 
+     }
+     console.log("X = "+x);
+     
+     for(let y=1;y<=10;y++){
+    	 
+     }
+     console.log("Y = "+y);
+  
+     wow(); 
+     function wow() {
+    	 console.log(this);
+     }
+   
+     window.name="Ashish Kumar!";
+     var customer = {
+				name : "Nagendra",
+				email : 'nagen@gmail.com',
+				sprint : function() {
+					console.log(this.name); //Nagendra
+					console.log(name);
+					console.log(this.email);
+				}
+		};
+		
+	   customer.sprint();
+	   console.log("______________!!!!!!!!!!!!!!!!!!!!____________");
+	   var acustomer = {
+				name : "Ashna Tech",
+				email : 'ashna@gmail.com',
+				sprint : ()=> {
+					//this , super , arguments , target.new
+					console.log(this.name);
+					console.log(self.name);
+					console.log(name);
+					//console.log(this.email);
+				}
+		};
+		
+	   acustomer.sprint();
+	   
+	   function show(teeth,address) {
+		    console.log("!name = "+this.name);
+        	console.log("!tail = "+this.tail);
+        	console.log("!color = "+this.color);
+        	console.log("!teeth = "+teeth);
+        	console.log("!address = "+address);
+	   }
+	   
+	   var dog = {
+			        name : "tommy",
+	                tail : 1,
+	                color:'white'  
+	             }
+	   
+	   show.call(dog,2,"Fremont");
+	   show.apply(dog,[10,"Fremont"]);
+	   
+	   var cat = {
+		        name : "chai",
+                tail : 1,
+                color:'pink',
+                details: function() {
+                	console.log("name = "+this.name);
+                	console.log("tail = "+this.tail);
+                	console.log("color = "+this.color);
+                } 
+            }
+	   cat.details();
+	   
+	   //calling cat function on dog object
+	   cat.details.call(dog);
+	   
+	   console.log("Binding cat method inside dog");
+	   dog.nisha=cat.details.bind(dog);
+	   dog.dog();
+	   
+	</script>
 
 </head>
 <body>
