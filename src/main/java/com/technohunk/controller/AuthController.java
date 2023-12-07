@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,14 +65,20 @@ public class AuthController {
 	}
 
 	@PostMapping("/signups")
-	public Map<String, Object> postSignup(@RequestBody SignupDTO signup) {
-		signup.setDoe(new Timestamp(new Date().getTime()));
-		signup.setRole("CUSTOMER");
-		signupService.saveSigup(signup);
+	public ResponseEntity<Map<String, Object>> postSignup(@RequestBody SignupDTO signup) {
+		boolean status=signupService.isAlreadySignup(signup.getEmail(), signup.getName());
 		Map<String, Object> jwtReponse = new HashMap<>();
-		jwtReponse.put("email", signup.getEmail());
-		jwtReponse.put("message", "Record is created successfully!");
-		return jwtReponse;
+		if(!status) {
+			signup.setDoe(new Timestamp(new Date().getTime()));
+			signup.setRole("CUSTOMER");
+			signupService.saveSigup(signup);
+			jwtReponse.put("message", "Record is created successfully!");
+			jwtReponse.put("email", signup.getEmail());
+			return new ResponseEntity<Map<String,Object>>(jwtReponse,HttpStatus.OK);
+		} else {
+			jwtReponse.put("message", "User is already signed up!");
+			return new ResponseEntity<Map<String,Object>>(jwtReponse,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@PostMapping("/cauth")

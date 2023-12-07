@@ -1,5 +1,6 @@
 package com.technohunk.service;
 
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,10 @@ public class SignupService {
 		BeanUtils.copyProperties(signupDTO, signup);
 		signup.setPassword(passwordEncoder.encode(signup.getPassword()));
 		signupRepository.save(signup);
+	}
+	
+	public boolean isAlreadySignup(String email,String name) {
+		return signupRepository.findByEmailAndName(email, name).isPresent();
 	}
 	
 	public void deleteSignupByEmail(String email) {
