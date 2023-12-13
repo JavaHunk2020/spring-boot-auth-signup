@@ -120,5 +120,8 @@ public class SignupService {
 		return status;
 	}
 	
-
+	public boolean existsByEmail(String email) {
+		List<Signup> list=signupRepository.findByEmail(email);
+		return list.size()> 0;
+	}
 }

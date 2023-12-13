@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,6 +60,22 @@ public class AuthController {
 		jwtReponse.put("message", "Record is deleted successfully!");
 		return jwtReponse;
 	}
+	
+	@GetMapping("/verifyemail/{email}")
+	public Map<String, Object> verifyemail(@PathVariable String email) {
+		Map<String, Object> jwtReponse = new HashMap<>();
+		boolean isExist = signupService.existsByEmail(email);
+		if (isExist) {
+			Random rand = new Random();
+			String code = String.format("%04d", rand.nextInt(10000));
+			System.out.println("Code - >>>>>>>>>>"+code);
+			jwtReponse.put("status", "success");
+		} else {
+			jwtReponse.put("status", "fail");
+		}
+		return jwtReponse;
+	}
+	
 	
 	@GetMapping("/signups")
 	@PreAuthorize("hasAuthority('ADMIN')")
