@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.technohunk.EmailCodeRepository;
 import com.technohunk.dto.SignupDTO;
+import com.technohunk.entity.EmailCodeEntity;
 import com.technohunk.security.JwtUtils;
+import com.technohunk.service.EmailService;
 import com.technohunk.service.SignupService;
 
 @RestController
@@ -35,10 +40,17 @@ public class AuthController {
 	private SignupService signupService;
 
 	@Autowired
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	JwtUtils jwtUtils;
+	private JwtUtils jwtUtils;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	
+	@Autowired
+    private EmailCodeRepository emailCodeRepository;
 
 	/**
 	 * @Override
@@ -61,6 +73,18 @@ public class AuthController {
 		return jwtReponse;
 	}
 	
+	
+	@GetMapping("/verify/email/code")
+	public Map<String, Object> verifyEmailCode(@RequestParam String email,@RequestParam String code) {
+		Map<String, Object> jwtReponse = new HashMap<>();
+		if(emailCodeRepository.findByEmailAndCode(email,code).isPresent()) {
+			jwtReponse.put("status", "success");	
+		}else {
+			jwtReponse.put("status", "false");
+		}
+		return jwtReponse;
+	}
+	
 	@GetMapping("/verifyemail/{email}")
 	public Map<String, Object> verifyemail(@PathVariable String email) {
 		Map<String, Object> jwtReponse = new HashMap<>();
@@ -69,6 +93,19 @@ public class AuthController {
 			Random rand = new Random();
 			String code = String.format("%04d", rand.nextInt(10000));
 			System.out.println("Code - >>>>>>>>>>"+code);
+			Optional<EmailCodeEntity> optional= emailCodeRepository.findByEmail(email);
+			EmailCodeEntity codeEntity=null;
+			if(optional.isPresent()) {
+				codeEntity=optional.get();
+				codeEntity.setCode(code);
+			}else {
+				codeEntity=new EmailCodeEntity();
+				codeEntity.setCode(code);
+				codeEntity.setEmail(email);
+				codeEntity.setDoe(new Timestamp(new Date().getTime()));
+			}
+			emailCodeRepository.save(codeEntity);
+			emailService.sendSimpleMessage(email, "Regarding your password reset code", "Your password reset code is = "+code);
 			jwtReponse.put("status", "success");
 		} else {
 			jwtReponse.put("status", "fail");
