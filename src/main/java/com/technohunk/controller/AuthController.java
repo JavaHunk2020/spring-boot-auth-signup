@@ -20,12 +20,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.technohunk.EmailCodeRepository;
+import com.technohunk.dto.ChangePasswordRequestDTO;
+import com.technohunk.dto.MessageDTO;
 import com.technohunk.dto.SignupDTO;
 import com.technohunk.entity.EmailCodeEntity;
 import com.technohunk.security.JwtUtils;
@@ -74,6 +77,21 @@ public class AuthController {
 	}
 	
 	
+	@PutMapping("/change/password")
+	public ResponseEntity<MessageDTO> changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
+		MessageDTO messageDTO = new MessageDTO();
+		if (!changePasswordRequestDTO.getNewPassword().equals(changePasswordRequestDTO.getConfirmPassword())) {
+			messageDTO.setMessage("Password mismatched.");
+			messageDTO.setCode("-1");
+			return new ResponseEntity<MessageDTO>(messageDTO, HttpStatus.BAD_REQUEST);
+		} else {
+			messageDTO.setCode("100");
+			signupService.changePassword(changePasswordRequestDTO);
+			messageDTO.setMessage("Password is changed successfully!");
+			return new ResponseEntity<MessageDTO>(messageDTO, HttpStatus.OK);
+		}
+	}
+	
 	@GetMapping("/verify/email/code")
 	public Map<String, Object> verifyEmailCode(@RequestParam String email,@RequestParam String code) {
 		Map<String, Object> jwtReponse = new HashMap<>();
@@ -105,7 +123,9 @@ public class AuthController {
 				codeEntity.setDoe(new Timestamp(new Date().getTime()));
 			}
 			emailCodeRepository.save(codeEntity);
+			
 			emailService.sendSimpleMessage(email, "Regarding your password reset code", "Your password reset code is = "+code);
+			
 			jwtReponse.put("status", "success");
 		} else {
 			jwtReponse.put("status", "fail");

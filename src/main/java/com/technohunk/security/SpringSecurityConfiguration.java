@@ -65,7 +65,7 @@ public class SpringSecurityConfiguration  {
 				.permitAll()
 				.antMatchers("/ap/papa")
 				.permitAll()
-				.antMatchers("/v1/verifyemail/**","/v1/verify/email/code","/v1/signups/**")
+				.antMatchers("/v1/verifyemail/**","/v1/verify/email/code","/v1/change/password","/v1/signups/**")
 				.permitAll()
 				.antMatchers("/ui/**")
 				.permitAll()

@@ -1,6 +1,5 @@
 package com.technohunk.service;
 
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.technohunk.EmailCodeRepository;
+import com.technohunk.dto.ChangePasswordRequestDTO;
 import com.technohunk.dto.LoginHistoryDTO;
 import com.technohunk.dto.SignupDTO;
+import com.technohunk.entity.EmailCodeEntity;
 import com.technohunk.entity.LoginHistoryEntity;
 import com.technohunk.entity.Signup;
 import com.technohunk.repository.LoginHistoryRepository;
@@ -33,6 +35,9 @@ public class SignupService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+    private EmailCodeRepository emailCodeRepository;
 	
 	public List<SignupDTO> findSignups() {
 		return signupRepository.findAll().stream().map(s->{
@@ -55,6 +60,22 @@ public class SignupService {
 	
 	public boolean isAlreadySignup(String email,String name) {
 		return signupRepository.findByEmailAndName(email, name).isPresent();
+	}
+	
+	public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
+		Optional<EmailCodeEntity> optional = emailCodeRepository.findByEmailAndCode(changePasswordRequestDTO.getEmail(),
+				changePasswordRequestDTO.getCode());
+		if (optional.isPresent()) {
+			List<Signup> signups = signupRepository.findByEmail(changePasswordRequestDTO.getEmail());
+			if (signups.size() > 0) {
+				// Signup entity is loaded inside Persistent Context
+				Signup signup = signups.get(0);
+				// I encoding password before saving in the database
+				signup.setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
+				signupRepository.save(signup);
+				emailCodeRepository.deleteById(optional.get().getId());
+			}
+		}
 	}
 	
 	public void deleteSignupByEmail(String email) {
