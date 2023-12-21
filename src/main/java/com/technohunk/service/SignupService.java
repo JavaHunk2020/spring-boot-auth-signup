@@ -51,6 +51,15 @@ public class SignupService {
 		}).collect(Collectors.toList());
 	}
 	
+	@Transactional
+	public void updateRoleByEmail(SignupDTO signupDTO) {
+		List<Signup>  list=signupRepository.findByEmail(signupDTO.getEmail());
+		if(list.size()==1) {
+			Signup signup=list.get(0);
+			signup.setRole(signupDTO.getRole());
+		}
+	}
+	
 	public void saveSigup(SignupDTO signupDTO) {
 		Signup signup=new Signup();
 		BeanUtils.copyProperties(signupDTO, signup);

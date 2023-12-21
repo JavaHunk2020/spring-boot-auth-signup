@@ -39,19 +39,12 @@
      for(var  x=1;x<=10;x++){
     	 
      }
-     console.log("X = "+x);
-     
-     for(let y=1;y<=10;y++){
-    	 
-     }
-     console.log("Y = "+y);
-  
      wow(); 
      function wow() {
     	 console.log(this);
      }
    
-     window.name="Ashish Kumar!";
+    /*  window.name="Ashish Kumar!";
      var customer = {
 				name : "Nagendra",
 				email : 'nagen@gmail.com',
@@ -60,11 +53,11 @@
 					console.log(name);
 					console.log(this.email);
 				}
-		};
+		}; */
 		
-	   customer.sprint();
+	  // customer.sprint();
 	   console.log("______________!!!!!!!!!!!!!!!!!!!!____________");
-	   var acustomer = {
+	 /*   var acustomer = {
 				name : "Ashna Tech",
 				email : 'ashna@gmail.com',
 				sprint : ()=> {
@@ -76,7 +69,7 @@
 				}
 		};
 		
-	   acustomer.sprint();
+	   acustomer.sprint(); */
 	   
 	   function show(teeth,address) {
 		    console.log("!name = "+this.name);
@@ -86,14 +79,15 @@
         	console.log("!address = "+address);
 	   }
 	   
-	   var dog = {
+	  /*  var dog = {
 			        name : "tommy",
 	                tail : 1,
 	                color:'white'  
 	             }
 	   
-	   show.call(dog,2,"Fremont");
-	   show.apply(dog,[10,"Fremont"]);
+	   show.call(
+,2,"Fremont");
+	   show.apply(dog,[10,"Fremont"]); */
 	   
 	   var cat = {
 		        name : "chai",
@@ -108,11 +102,23 @@
 	   cat.details();
 	   
 	   //calling cat function on dog object
-	   cat.details.call(dog);
+	  // cat.details.call(dog);
 	   
 	   console.log("Binding cat method inside dog");
-	   dog.nisha=cat.details.bind(dog);
-	   dog.dog();
+	  // dog.nisha=cat.details.bind(dog);
+	   //dog.dog();
+	   
+       alert("0202");	   
+	   const obj={
+			   name:'Nagendra',
+			   age:43
+	     }
+	   console.log("_____________________________");
+	   console.log(obj);
+	   let name='a';
+	   var tobj={[name]:'Vishal',age:9}
+	   console.log(tobj);
+	   console.log("_____________________________");
 	   
 	</script>
 

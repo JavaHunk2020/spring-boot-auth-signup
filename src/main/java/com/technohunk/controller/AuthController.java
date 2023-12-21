@@ -3,6 +3,7 @@ package com.technohunk.controller;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,9 +16,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,8 +56,31 @@ public class AuthController {
 	private EmailService emailService;
 	
 	
+	//role 
+	//email
+	@PatchMapping("/customers/role")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<MessageDTO> updateCustomerRole(@RequestBody Map<String,String> request) {
+		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		SignupDTO signupDTO=new SignupDTO();
+		signupDTO.setEmail(request.get("email"));
+		signupDTO.setRole(request.get("role"));
+		signupService.updateRoleByEmail(signupDTO);
+		MessageDTO messageDTO=new MessageDTO();
+		messageDTO.setCode("200");
+		messageDTO.setMessage("Role is updated successfully in the  database!");
+		return new ResponseEntity<MessageDTO>(messageDTO, HttpStatus.OK);
+	}
+	
+	
 	@Autowired
     private EmailCodeRepository emailCodeRepository;
+	
+	public static void main(String[] args) {
+		String str="[[?";
+		str=str.replaceAll("[?]+", "]");
+		System.out.println(str);
+	}
 
 	/**
 	 * @Override
@@ -136,8 +163,18 @@ public class AuthController {
 	
 	@GetMapping("/signups")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public List<SignupDTO> getSignups() {
-		return signupService.findSignups();
+	public List<SignupDTO> getSignups(@AuthenticationPrincipal UserDetails userDetails) {
+		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		List<SignupDTO>  signupDTOs=signupService.findSignups();
+		Iterator<SignupDTO> it=signupDTOs.iterator();
+		while(it.hasNext()) {
+			SignupDTO signupDTO=it.next();
+			if(signupDTO.getEmail().equals(userDetails.getUsername())) {
+				it.remove();
+				break;
+			}
+		}
+		return signupDTOs;
 	}
 
 	@PostMapping("/signups")
