@@ -95,6 +95,7 @@ public class AuthController {
 	 */
 
 	@DeleteMapping("/signups/{email}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public Map<String, Object> deleteSignup(@PathVariable String email) {
 		signupService.deleteSignupByEmail(email);
 		Map<String, Object> jwtReponse = new HashMap<>();
