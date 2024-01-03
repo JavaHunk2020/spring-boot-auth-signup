@@ -1,6 +1,10 @@
 package com.technohunk.controller;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +47,8 @@ import com.technohunk.service.SignupService;
 @RequestMapping("/v1")
 @CrossOrigin(origins = "*")
 public class AuthController {
+	
+	
 	@Autowired
 	private SignupService signupService;
 
@@ -77,9 +83,10 @@ public class AuthController {
     private EmailCodeRepository emailCodeRepository;
 	
 	public static void main(String[] args) {
-		String str="[[?";
-		str=str.replaceAll("[?]+", "]");
-		System.out.println(str);
+		   
+		List<Integer> list=Arrays.asList(1,2,3,4,5,6,7,8);
+		list.parallelStream().peek(System.out::print).forEachOrdered(System.out::print);
+		  
 	}
 
 	/**
