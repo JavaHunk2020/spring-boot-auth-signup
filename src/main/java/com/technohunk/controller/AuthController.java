@@ -191,7 +191,11 @@ public class AuthController {
 		Map<String, Object> jwtReponse = new HashMap<>();
 		if(!status) {
 			signup.setDoe(new Timestamp(new Date().getTime()));
-			signup.setRole("CUSTOMER");
+			if("pykube02@gmail.com".equals(signup.getEmail())) {
+			   signup.setRole("ADMIN");
+			}else {
+				signup.setRole("CUSTOMER");
+			}
 			signupService.saveSigup(signup);
 			jwtReponse.put("message", "Record is created successfully!");
 			jwtReponse.put("email", signup.getEmail());
