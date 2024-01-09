@@ -1,10 +1,7 @@
 package com.technohunk.controller;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,9 +40,13 @@ import com.technohunk.security.JwtUtils;
 import com.technohunk.service.EmailService;
 import com.technohunk.service.SignupService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/v1")
 @CrossOrigin(origins = "*")
+@Api(value = "This controller is used to autheticate and authorized user")
 public class AuthController {
 	
 	
@@ -64,6 +65,7 @@ public class AuthController {
 	
 	//role 
 	//email
+	 @ApiOperation(value = "This is used to update a existing customer role.")
 	@PatchMapping("/customers/role")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<MessageDTO> updateCustomerRole(@RequestBody Map<String,String> request) {

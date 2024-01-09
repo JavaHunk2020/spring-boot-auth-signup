@@ -55,6 +55,16 @@ public class SpringSecurityConfiguration  {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	 private static final String[] AUTH_WHITELIST = {
+	            // -- swagger ui
+	            "/v2/api-docs",
+	            "/v3/api-docs",  
+	            "/swagger-resources/**", 
+	            "/webjars/**",
+	            "/swagger-ui/**",
+	             };
+	
 
 	@Bean
 	protected SecurityFilterChain  filterChain(HttpSecurity http) throws Exception {
@@ -65,10 +75,11 @@ public class SpringSecurityConfiguration  {
 				.permitAll()
 				.antMatchers("/ap/papa")
 				.permitAll()
-				.antMatchers("/v1/verifyemail/**","/v1/verify/email/code","/v1/change/password","/v1/signups/**")
+				.antMatchers("/swagger-ui.html/**","/v1/verifyemail/**","/v1/verify/email/code","/v1/change/password","/v1/signups/**")
 				.permitAll()
 				.antMatchers("/ui/**")
 				.permitAll()
+			     .antMatchers(AUTH_WHITELIST).permitAll() 
 				.anyRequest().authenticated();
 		return http.build();
 	}
